@@ -4,13 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
 
-public class TesteAvaliador {
+public class AvaliadorTest {
+
 
 	@Test
     public void deveEntenderLeilaoOrdemCrescente() {
@@ -77,4 +78,19 @@ public class TesteAvaliador {
         assertEquals(200, maiores.get(2).getValor(), 0.00001);
         
     }
+    
+    @Test
+    public void deveDobrarUltimoLance() {
+    	
+    	Usuario joao = new Usuario("João");
+        Leilao leilao = new Leilao("Maquina de lavar roupas consul");
+
+    	leilao.propoe(new Lance(joao,400.0));
+    	leilao.dobraLance(joao);
+    	
+    	assertEquals(800,leilao.getLances().get(leilao.getLances().size() -1).getValor()  , 0.00001);
+    	
+    	
+    }
+
 }
