@@ -4,6 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import br.com.caelum.leilao.dominio.Lance;
@@ -12,13 +16,39 @@ import br.com.caelum.leilao.dominio.Usuario;
 
 public class AvaliadorTest {
 
+	private Avaliador leiloeiro;
+	private Usuario joao;
+	private Usuario jose;
+	private Usuario maria;
+	private Usuario alexandra;
+
+	@BeforeClass
+	public static void inicioDaClasse() {
+		System.out.println("inicio da classe ");
+	}
+	@AfterClass
+	public static void finalDaClasse() {
+		System.out.println("final da classe ");
+	}
+	
+	
+	@Before
+	public void criaAvaliador() {
+		
+		this.leiloeiro = new Avaliador();
+		this.joao = new Usuario("João");
+		this.jose = new Usuario("José");
+		this.maria = new Usuario("Maria");
+		this.alexandra = new Usuario("Alexandra");
+	}
+	
+	@After
+	public void finaliza() {
+	  System.out.println("fim");
+	}
 
 	@Test
     public void deveEntenderLeilaoOrdemCrescente() {
-        Usuario joao = new Usuario("João");
-        Usuario jose = new Usuario("José");
-        Usuario maria = new Usuario("Maria");
-        Usuario alexandra = new Usuario("Alexandra");
 
         Leilao leilao = new Leilao("Playstation 3 Novo");
 
@@ -27,7 +57,6 @@ public class AvaliadorTest {
         leilao.propoe(new Lance(maria, 400.0));
         leilao.propoe(new Lance(alexandra, 450.0));
 
-        Avaliador leiloeiro = new Avaliador();
         leiloeiro.avalia(leilao);
 
         double maiorEsperado = 450;
@@ -41,12 +70,10 @@ public class AvaliadorTest {
     
     @Test
     public void deveEntenderLeilaoComApenasUmLance() {
-        Usuario joao = new Usuario("João"); 
         Leilao leilao = new Leilao("Playstation 3 Novo");
 
         leilao.propoe(new Lance(joao,1000.0));
 
-        Avaliador leiloeiro = new Avaliador();
         leiloeiro.avalia(leilao);
 
         // veja que não precisamos mais da palavra Assert! 
@@ -57,24 +84,20 @@ public class AvaliadorTest {
     
     @Test
     public void encontrarMaioresLances() {
-    	
-    	Usuario joao = new Usuario("João");
-        Usuario jose = new Usuario("José");
-        Usuario maria = new Usuario("Maria");
-        
-        Leilao leilao = new Leilao("Playstation 3 Novo");
-        
-        leilao.propoe(new Lance(joao,200.0));
-        leilao.propoe(new Lance(jose,350.0));
-        leilao.propoe(new Lance(maria,400.0));
-        
-        Avaliador leiloeiro = new Avaliador();
+    	        
+        Leilao leilao = new CriadorDeLeilao().para("Playstation 3 Novo")
+        		.lance(joao,100)
+        		.lance(maria,200)
+        		.lance(joao,300)
+        		.lance(maria,400)
+        		.constroi();
+        		
         leiloeiro.avalia(leilao);
         
         List<Lance> maiores = leiloeiro.getTresMaiores(); 
         assertEquals(3, maiores.size());
         assertEquals(400, maiores.get(0).getValor(), 0.00001);
-        assertEquals(350, maiores.get(1).getValor(), 0.00001);
+        assertEquals(300, maiores.get(1).getValor(), 0.00001);
         assertEquals(200, maiores.get(2).getValor(), 0.00001);
         
     }
@@ -82,15 +105,25 @@ public class AvaliadorTest {
     @Test
     public void deveDobrarUltimoLance() {
     	
-    	Usuario joao = new Usuario("João");
-        Leilao leilao = new Leilao("Maquina de lavar roupas consul");
+    	Leilao leilao = new Leilao("Macbook Pro 15");
+        Usuario steveJobs = new Usuario("Steve Jobs");
+        Usuario billGates = new Usuario("Bill Gates");
 
-    	leilao.propoe(new Lance(joao,400.0));
-    	leilao.dobraLance(joao);
-    	
-    	assertEquals(800,leilao.getLances().get(leilao.getLances().size() -1).getValor()  , 0.00001);
-    	
-    	
+        leilao.propoe(new Lance(steveJobs, 2000));
+        leilao.propoe(new Lance(billGates, 3000));
+        leilao.dobraLance(steveJobs);
+
+        assertEquals(4000, leilao.getLances().get(2).getValor(), 0.00001);
     }
 
+    @Test
+    public void naoDeveDobrarCasoNaoHajaLanceAnterior() {
+        Leilao leilao = new Leilao("Macbook Pro 15");
+        Usuario steveJobs = new Usuario("Steve Jobs");
+
+        leilao.dobraLance(steveJobs);
+
+        assertEquals(0, leilao.getLances().size());
+    }
+    
 }

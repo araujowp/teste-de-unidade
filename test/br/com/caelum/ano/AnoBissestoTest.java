@@ -23,5 +23,4 @@ public class AnoBissestoTest {
 		assertEquals(false, ano.isAnoBissexto(2011));
 		
 	}
-
 }
