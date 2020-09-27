@@ -126,4 +126,14 @@ public class AvaliadorTest {
         assertEquals(0, leilao.getLances().size());
     }
     
+    @Test(expected = RuntimeException.class)
+    public void naoDeveAvaliarSemLances() {
+    	
+    	Leilao leilao = new CriadorDeLeilao()
+    			.para("unicornio malhado")
+    			.constroi();
+    	leiloeiro.avalia(leilao);
+    	
+    }
+    
 }
