@@ -1,6 +1,8 @@
 package br.com.caelum.leilao.servico;
 
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.util.List;
 
@@ -62,10 +64,17 @@ public class AvaliadorTest {
         double maiorEsperado = 450;
         double menorEsperado = 250;
         double medioEsperado = 350;
-        
+
+        //sem hamcrest 
         assertEquals(maiorEsperado,leiloeiro.getMaiorLance(), 0.00001);
         assertEquals(menorEsperado,leiloeiro.getMenorLance(),0.00001); 
-        assertEquals(medioEsperado,leiloeiro.getLanceMedio(),0.01); 
+        assertEquals(medioEsperado,leiloeiro.getLanceMedio(),0.01);
+        
+        //com Hamcrest s
+        assertThat(leiloeiro.getMaiorLance(), equalTo(maiorEsperado));
+        assertThat(leiloeiro.getMenorLance(), equalTo(menorEsperado));
+        assertThat(leiloeiro.getLanceMedio(), equalTo(medioEsperado));
+        
     }
     
     @Test
@@ -77,9 +86,14 @@ public class AvaliadorTest {
         leiloeiro.avalia(leilao);
 
         // veja que não precisamos mais da palavra Assert! 
-        assertEquals(1000.0, leiloeiro.getMaiorLance(), 0.0001);
-        assertEquals(1000.0, leiloeiro.getMenorLance(), 0.0001);
-        assertEquals(1000.0, leiloeiro.getLanceMedio(),0.01);
+        //assertEquals(1000.0, leiloeiro.getMaiorLance(), 0.0001);
+        //assertEquals(1000.0, leiloeiro.getMenorLance(), 0.0001);
+        //assertEquals(1000.0, leiloeiro.getLanceMedio(),0.01);
+        
+        assertThat(1000.0, equalTo(leiloeiro.getMaiorLance()));
+        assertThat(1000.0,equalTo(leiloeiro.getMenorLance()));
+        assertThat(1000.0,equalTo(leiloeiro.getLanceMedio()));
+        
     }
     
     @Test
@@ -96,10 +110,17 @@ public class AvaliadorTest {
         
         List<Lance> maiores = leiloeiro.getTresMaiores(); 
         assertEquals(3, maiores.size());
+        // ex sem Hamcrest
         assertEquals(400, maiores.get(0).getValor(), 0.00001);
         assertEquals(300, maiores.get(1).getValor(), 0.00001);
         assertEquals(200, maiores.get(2).getValor(), 0.00001);
         
+        //ex: com Hamcrest
+        assertThat(maiores, hasItems(
+        	    new Lance(maria, 400),
+        	    new Lance(joao, 300),
+        	    new Lance(maria, 200)
+        	));
     }
     
     @Test
